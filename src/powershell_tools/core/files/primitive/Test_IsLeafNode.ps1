@@ -1,4 +1,6 @@
-function Get-PythonFunctionName {
+
+
+function Test-IsLeafNode {
     [CmdletBinding()]
     param(
         [Parameter(
@@ -6,49 +8,30 @@ function Get-PythonFunctionName {
             ValueFromPipeline,
             ValueFromPipelineByPropertyName
         )]
-        [Alias('FullName')]
+        [Alias('FullPath')]
         [string]$Path
     )
 
-    begin {
-        $foundFunctions = @()
-    }
-
     process {
-        # ───────── validation ─────────
+        Write-Verbose "[Test-IsLeafNode] Testing leaf node: $Path"
+
         if (-not (Test-Path $Path)) {
-            throw "[Get-PythonFunctionName] File does not exist: $Path"
+            Write-Error "[Test-IsLeafNode] Path not found: $Path"
+            return
         }
 
-        if ((Get-Item $Path).Extension -ne '.py') {
-            throw "[Get-PythonFunctionName] Not a python file: $Path"
+        $item = Get-Item $Path
+
+        # file Definitely leaf node
+        if (-not $item.PSIsContainer) {
+            return $true
         }
 
-        # ───────── retrieve and parse ─────────
-        $lines = Get-Content $Path
-        $lineNumber = 0
+        $children = Get-ChildItem -Path $Path -Force -ErrorAction SilentlyContinue
 
-        foreach ($line in $lines) {
-            $lineNumber++
-
-            if ($line -match '^\s*def\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*\(') {
-                $name = $matches[1]
-
-                # pipeline 输出（核心行为）
-                $name
-
-                # 收集用于 end 的 verbose
-                $foundFunctions += $name
-            }
-        }
+        return ($children.Count -eq 0)
     }
 
-    end {
-        if ($foundFunctions.Count -gt 0) {
-            Write-Verbose ("Extracted functions: {0}" -f ($foundFunctions -join ', '))
-        }
-        else {
-            Write-Verbose "No functions found."
-        }
-    }
+    
+    
 }

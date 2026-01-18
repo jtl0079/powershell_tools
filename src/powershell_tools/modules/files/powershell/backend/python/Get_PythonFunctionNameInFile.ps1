@@ -1,4 +1,7 @@
-function Get-PythonFunctionNameInFiles {
+
+
+
+function Get-PythonFunctionNameInFile {
     [CmdletBinding()]
     param(
         [Parameter(
@@ -15,12 +18,15 @@ function Get-PythonFunctionNameInFiles {
     }
 
     process {
+        # ______ validations ______
+        # Validate file existence
         if (-not (Test-Path $Path)) {
-            throw "File does not exist: $Path"
+            throw "[Get-PythonFunctionNameInFile] File does not exist: $Path"
         }
 
+        # Validate file extension
         if ((Get-Item $Path).Extension -ne '.py') {
-            throw "Not a python file: $Path"
+            throw "[Get-PythonFunctionNameInFile] Not a python file: $Path"
         }
 
         $lines = Get-Content $Path
@@ -43,16 +49,14 @@ function Get-PythonFunctionNameInFiles {
 
     end {
         if ($foundFunctions.Count -gt 0) {
-            Write-Verbose ("Extracted functions: {0}" -f ($foundFunctions -join ', '))
+            Write-Verbose ("[Get-PythonFunctionNameInFile] Extracted functions: {0}" -f ($foundFunctions -join ', '))
         }
         else {
-            Write-Verbose "No functions found."
+            Write-Verbose ("[Get-PythonFunctionNameInFile] No functions found.")
         }
     }
 }
 
 # Testing example:
-# . C:\_my\powershell_tools\src\powershell_tools\modules\files\powershell\backend\python\Get_PythonFunctionName.ps1; `
+# . C:\_my\powershell_tools\src\powershell_tools\modules\files\powershell\backend\python\Get_PythonFunctionNameInFile.ps1; `
 # Get-PythonFunctionName "C:\_my\python_tools\src\python_tools\core\network\primitive\mac_to_hex_string.py" -Verbose
-#
-#

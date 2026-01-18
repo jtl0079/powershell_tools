@@ -5,12 +5,17 @@
     Generates __init__.py files in all subdirectories of a specified path to ensure Python recognizes them as packages.
 
     .DESCRIPTION
-    This function traverses the directory structure starting from the provided path and creates an empty __init__.py file in each subdirectory that does not already contain one. This is useful for organizing Python modules into packages.
-
+    Renew the current __init__.py with sibling module imports.
+    if __init__.py does not exist, it will be created.
+    
+    Logic:
+    1. receives a directory path as input. (folder path)
+    2. Check the number of files is not equal to 0.
+    3. 
 
 """
 
-
+# unfinished
 
 
 
